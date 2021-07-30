@@ -111,14 +111,14 @@ block-allow-list:             # This configuration applies to DM versions higher
   rule-1:
     do-dbs: ["test*"]         # Starting with characters other than "~" indicates that it is a wildcard;
                               # v1.0.5 or later versions support the regular expression rules.
-​    do-tables:
+    do-tables:
     - db-name: "test[123]"    # Matches test1, test2, and test3.
       tbl-name: "t[1-5]"      # Matches t1, t2, t3, t4, and t5.
     - db-name: "test"
       tbl-name: "t"
   rule-2:
     do-dbs: ["~^test.*"]      # Starting with "~" indicates that it is a regular expression.
-​    ignore-dbs: ["mysql"]
+    ignore-dbs: ["mysql"]
     do-tables:
     - db-name: "~^test.*"
       tbl-name: "~^t.*"
@@ -133,8 +133,8 @@ block-allow-list:             # This configuration applies to DM versions higher
 
 - `do-dbs`: allow lists of the schemas to be migrated, similar to [`replicate-do-db`](https://dev.mysql.com/doc/refman/5.7/en/replication-options-replica.html#option_mysqld_replicate-do-db) in MySQL
 - `ignore-dbs`: block lists of the schemas to be migrated, similar to [`replicate-ignore-db`](https://dev.mysql.com/doc/refman/5.7/en/replication-options-replica.html#option_mysqld_replicate-ignore-db) in MySQL
-- `do-tables`: allow lists of the tables to be migrated, similar to [`replicate-do-table`](https://dev.mysql.com/doc/refman/5.7/en/replication-options-replica.html#option_mysqld_replicate-do-table) in MySQL
-- `ignore-tables`: block lists of the tables to be migrated, similar to [`replicate-ignore-table`](https://dev.mysql.com/doc/refman/5.7/en/replication-options-replica.html#option_mysqld_replicate-ignore-table) in MySQL
+- `do-tables`: allow lists of the tables to be migrated, similar to [`replicate-do-table`](https://dev.mysql.com/doc/refman/5.7/en/replication-options-replica.html#option_mysqld_replicate-do-table) in MySQL. Both `db-name` and `tbl-name` must be specified
+- `ignore-tables`: block lists of the tables to be migrated, similar to [`replicate-ignore-table`](https://dev.mysql.com/doc/refman/5.7/en/replication-options-replica.html#option_mysqld_replicate-ignore-table) in MySQL. Both `db-name` and `tbl-name` must be specified
 
 If a value of the above parameters starts with the `~` character, the subsequent characters of this value are treated as a [regular expression](https://golang.org/pkg/regexp/syntax/#hdr-syntax). You can use this parameter to match schema or table names.
 
@@ -376,23 +376,45 @@ In the MySQL ecosystem, tools such as gh-ost and pt-osc are widely used. DM prov
 ### Restrictions
 
 - DM only supports gh-ost and pt-osc.
-- When `online-ddl-scheme` is enabled, the checkpoint corresponding to incremental replication should not be in the process of online DDL execution. For example, if an upstream online DDL operation starts at `position-A` and ends at `position-B` of the binlog, the starting point of incremental replication should be earlier than `position-A` or later than `position-B`; otherwise, an error occurs. For details, refer to [FAQ](faq.md#how-to-handle-the-error-returned-by-the-ddl-operation-related-to-the-gh-ost-table-after-online-ddl-scheme-gh-ost-is-set).
+- When `online-ddl` is enabled, the checkpoint corresponding to incremental replication should not be in the process of online DDL execution. For example, if an upstream online DDL operation starts at `position-A` and ends at `position-B` of the binlog, the starting point of incremental replication should be earlier than `position-A` or later than `position-B`; otherwise, an error occurs. For details, refer to [FAQ](faq.md#how-to-handle-the-error-returned-by-the-ddl-operation-related-to-the-gh-ost-table-after-online-ddl-scheme-gh-ost-is-set).
 
 ### Parameter configuration
 
-- If the upstream MySQL/MariaDB uses gh-ost, set `online-ddl-scheme` to `"gh-ost"` in the task configuration file:
+<SimpleTab>
+<div label="v2.0.5 and later">
+ 
+In v2.0.5 and later versions, you need to use the `online-ddl` configuration item in the `task` configuration file.
 
+- If the upstream MySQL/MariaDB (at the same time) uses the gh-ost or pt-osc tool, set `online-ddl` to `true` in the task configuration file:
+
+```yml
+online-ddl: true
 ```
+
+> **Note:**
+>
+> Since v2.0.5, `online-ddl-scheme` has been deprecated, so you need to use `online-ddl` instead of `online-ddl-scheme`. That means that setting `online-ddl: true` overwrites `online-ddl-scheme`, and setting `online-ddl-scheme: "pt"` or `online-ddl-scheme: "gh-ost"` is converted to `online-ddl: true`.
+
+</div>
+
+<div label="earlier than v2.0.5">
+
+Before v2.0.5 (not including v2.0.5), you need to use the `online-ddl-scheme` configuration item in the `task` configuration file.
+
+- If the upstream MySQL/MariaDB uses the gh-ost tool, set it in the task configuration file:
+
+```yml
 online-ddl-scheme: "gh-ost"
 ```
 
-- If the upstream MySQL/MariaDB uses pt-osc, set `online-ddl-scheme` to `"pt"` in the task configuration file:
+- If the upstream MySQL/MariaDB uses the pt tool, set it in the task configuration file:
 
-```
+```yml
 online-ddl-scheme: "pt"
 ```
 
-For more information about online DDL tools, refer to [Online DDL Scheme](feature-online-ddl-scheme.md).
+</div>
+</SimpleTab>
 
 ## Shard merge
 
