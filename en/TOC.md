@@ -45,6 +45,7 @@
     - [Pause a Task](pause-task.md)
     - [Resume a Task](resume-task.md)
     - [Stop a Task](stop-task.md)
+    - [Export and Import Data Sources and Task Configuration of Clusters](export-import-config.md)
     - [Handle Failed DDL Statements](handle-failed-ddl-statements.md)
   - [Manually Handle Sharding DDL Lock](manually-handling-sharding-ddl-locks.md)
   - [Manage Schemas of Tables to be Migrated](manage-schema.md)
@@ -82,6 +83,7 @@
 + [Glossary](glossary.md)
 + Release Notes
   + v2.0
+    - [2.0.5](releases/2.0.5.md)
     - [2.0.4](releases/2.0.4.md)
     - [2.0.3](releases/2.0.3.md)
     - [2.0.2](releases/2.0.2.md)
