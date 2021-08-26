@@ -1,5 +1,5 @@
 ---
-title: Quick Start Guide for TiDB Data Migration
+title: TiDB Data Migration Quick Start
 summary: Learn how to quickly deploy a DM cluster using binary packages.
 aliases: ['/docs/tidb-data-migration/dev/get-started/','/tidb-data-migration/dev/get-started']
 ---
@@ -8,9 +8,15 @@ aliases: ['/docs/tidb-data-migration/dev/get-started/','/tidb-data-migration/dev
 
 This document describes how to migrate data from MySQL to TiDB using [TiDB Data Migration](https://github.com/pingcap/dm) (DM).
 
+If you need to deploy DM in the production environment, refer to the following documents:
+
+- [Deploy a DM cluster Using TiUP](deploy-a-dm-cluster-using-tiup.md)
+- [Create a Data Source](quick-start-create-source.md)
+- [Create a Data Migration Task](quick-create-migration-task.md)
+
 ## Sample scenario
 
-Suppose you deploy DM-master and DM-worker instances locally, and migrate data from an upstream MySQL instance to a downstream TiDB instance.
+Suppose you deploy DM-master and DM-worker instances in an on-premise environment, and migrate data from an upstream MySQL instance to a downstream TiDB instance.
 
 The detailed information of each instance is as follows:
 
@@ -190,7 +196,7 @@ To load the data source configuration file of MySQL to the DM cluster using dmct
 {{< copyable "shell-regular" >}}
 
 ```bash
-./bin/dmctl --master-addr=127.0.0.1:8261 operate-source create mysql-source-conf.yaml
+./bin/dmctl --master-addr=127.0.0.1:8261 operate-source create conf/source1.yaml
 ```
 
 The following is an example of the returned results:
